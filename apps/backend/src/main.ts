@@ -6,6 +6,13 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // Enable CORS for frontend
+  app.enableCors({
+    origin: ['http://localhost:5173', 'http://localhost:3000'], // Vite dev server and other common ports
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  });
+
   // Global validation pipe
   app.useGlobalPipes(
     new ValidationPipe({

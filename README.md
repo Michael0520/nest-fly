@@ -1,21 +1,67 @@
 # Restaurant Management System
 
-A learning project built with NestJS and React using pnpm workspace monorepo architecture.
+A modern restaurant management system built with NestJS backend and React frontend using pnpm workspace monorepo architecture. This project demonstrates full-stack development with type-safe API integration, modern UI components, and real-time data management.
 
-## Project Structure
+## 🚀 Features
+
+- **Menu Management** - Browse restaurant menu with cuisine categories
+- **Order Creation** - Interactive order form with item selection
+- **Order Tracking** - Real-time order status updates
+- **Dashboard** - Restaurant statistics and overview
+- **Type Safety** - End-to-end TypeScript with runtime validation
+- **Modern UI** - Beautiful interface with TailwindCSS v4 and Shadcn-UI
+
+## 📁 Project Structure
 
 ```
 nest-learn/
 ├── apps/
-│   ├── backend/          # NestJS API
+│   ├── backend/          # NestJS API server
+│   │   ├── src/
+│   │   │   ├── restaurant/    # Restaurant domain logic
+│   │   │   ├── prisma/        # Database service
+│   │   │   └── types/         # TypeScript interfaces
+│   │   └── prisma/            # Database schema & migrations
 │   └── frontend/         # React application
+│       ├── src/
+│       │   ├── api/           # API hooks & configuration
+│       │   ├── components/    # UI components
+│       │   ├── lib/           # Utilities & schemas
+│       │   └── App.tsx        # Main application
+│       └── components.json    # Shadcn-UI configuration
 ├── packages/
 │   └── shared/           # Shared types and utilities
 ├── pnpm-workspace.yaml   # Workspace configuration
 └── package.json          # Root package.json
 ```
 
-## Quick Start
+## 🛠️ Tech Stack
+
+### Backend
+- **Framework**: NestJS with TypeScript
+- **Database**: PostgreSQL with Prisma ORM
+- **Validation**: class-validator with DTOs
+- **Documentation**: Swagger/OpenAPI
+- **Testing**: Jest with supertest
+
+### Frontend
+- **Framework**: React 19 with TypeScript
+- **Build Tool**: Vite
+- **Styling**: TailwindCSS v4
+- **UI Components**: Shadcn-UI
+- **State Management**: React Query (TanStack Query)
+- **Validation**: Zod schemas
+- **Routing**: React Router v7
+- **HTTP Client**: Axios
+- **Icons**: Lucide React
+
+### DevOps
+- **Package Manager**: pnpm with workspaces
+- **Linting**: ESLint
+- **Database Migrations**: Prisma
+- **CORS**: Enabled for development
+
+## 🚀 Quick Start
 
 ### Prerequisites
 
@@ -26,110 +72,118 @@ nest-learn/
 ### Installation
 
 ```bash
+# Clone and install dependencies
 pnpm install
 ```
-
-### Environment Setup
-
-1. **Backend configuration**
-   ```bash
-   cd apps/backend
-   cp .env.example .env
-   # Edit .env file with your database connection details
-   ```
-
-2. **Frontend configuration**
-   ```bash
-   cd apps/frontend
-   cp .env.example .env
-   # Default API URL is http://localhost:3001
-   ```
 
 ### Database Setup
 
 ```bash
-# Run database migrations
-pnpm db:migrate
+# Navigate to backend
+cd apps/backend
 
-# Seed sample data
-pnpm db:seed
-
-# Open Prisma Studio
-pnpm db:studio
+# Set up database (ensure PostgreSQL is running)
+npx prisma migrate dev --name init
+npx prisma db seed
 ```
 
-## Development Commands
-
-### Start both backend and frontend
+### Development
 
 ```bash
-pnpm dev
+# Start backend (from apps/backend)
+pnpm run start:dev
+
+# Start frontend (from apps/frontend) 
+pnpm run dev
 ```
 
-### Start services individually
+**URLs:**
+- Frontend: http://localhost:5173
+- Backend API: http://localhost:3001
+- Swagger Documentation: http://localhost:3001/api
 
-```bash
-# Backend only
-pnpm backend:dev
+## 📋 API Endpoints
 
-# Frontend only
-pnpm frontend:dev
-```
-
-### Build
-
-```bash
-# Build all projects
-pnpm build
-
-# Build individually
-pnpm backend:build
-pnpm frontend:build
-```
-
-### Other Commands
-
-```bash
-# Run tests
-pnpm test
-
-# Lint code
-pnpm lint
-
-# Format code
-pnpm format
-
-# Clean all dependencies
-pnpm clean
-```
-
-## API Endpoints
-
-### Menu Management
-- `GET /restaurant/menu` - Get menu items
-- `POST /restaurant/orders` - Create new order
+### Restaurant Management
+- `GET /restaurant/menu` - Get all menu items
+- `GET /restaurant/menu/:id` - Get specific menu item
+- `POST /restaurant/order` - Create new order
 - `GET /restaurant/orders` - Get all orders
-- `PATCH /restaurant/orders/:id/status` - Update order status
+- `GET /restaurant/order/:id` - Get specific order
+- `PATCH /restaurant/order/:id/status` - Update order status
+- `GET /restaurant/stats` - Get restaurant statistics
 
-## Tech Stack
+### Example API Usage
 
-### Backend
-- **Framework**: NestJS
-- **Database**: PostgreSQL
-- **ORM**: Prisma
-- **Documentation**: Swagger
-- **Testing**: Jest
+```bash
+# Get menu
+curl http://localhost:3001/restaurant/menu
 
-### Frontend
-- **Framework**: React 19 + TypeScript
-- **Build Tool**: Vite
-- **Routing**: React Router
-- **HTTP Client**: Axios
+# Create order
+curl -X POST http://localhost:3001/restaurant/order \
+  -H "Content-Type: application/json" \
+  -d '{"customerName": "John Doe", "itemIds": [1, 2]}'
 
-### Shared
-- **Language**: TypeScript
-- **Content**: Type definitions and interfaces
+# Update order status
+curl -X PATCH http://localhost:3001/restaurant/order/1/status \
+  -H "Content-Type: application/json" \
+  -d '{"status": "preparing"}'
+```
 
-## License
+## 🏗️ Architecture
+
+### Frontend Architecture
+- **React Query** manages server state with automatic caching and background updates
+- **Zod schemas** provide runtime validation for all API responses
+- **Shadcn-UI components** built on TailwindCSS v4 for consistent design
+- **Type-safe API hooks** ensure compile-time and runtime safety
+
+### Backend Architecture
+- **Controller-Service-Repository pattern** with NestJS
+- **Prisma ORM** for type-safe database operations
+- **DTO validation** with class-validator for request validation
+- **Swagger documentation** auto-generated from decorators
+
+## 📱 Application Pages
+
+1. **Dashboard** (`/`) - Restaurant statistics and quick actions
+2. **Menu** (`/menu`) - Display all menu items with cuisine categories  
+3. **Orders** (`/orders`) - Manage orders with status updates
+4. **Create Order** (`/create-order`) - Interactive order creation form
+
+## 🔧 Development Commands
+
+```bash
+# Backend development
+cd apps/backend
+pnpm run start:dev     # Start with hot reload
+pnpm run build        # Build for production
+pnpm run test          # Run tests
+
+# Frontend development  
+cd apps/frontend
+pnpm run dev           # Start dev server
+pnpm run build         # Build for production
+pnpm run lint          # Lint code
+
+# Database operations
+cd apps/backend
+npx prisma studio      # Open Prisma Studio
+npx prisma migrate dev # Create migration
+npx prisma db seed     # Seed database
+```
+
+## 🎯 Learning Goals
+
+This project demonstrates:
+- Modern full-stack development patterns
+- Type-safe API integration
+- Real-time data management
+- Component-based UI architecture
+- Database modeling and migrations
+- API documentation with Swagger
+- Monorepo workspace management
+
+## 📝 License
 
 MIT
