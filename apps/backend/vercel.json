@@ -5,7 +5,11 @@
       "src": "api/index.ts",
       "use": "@vercel/node",
       "config": {
-        "includeFiles": ["prisma/schema.prisma"]
+        "includeFiles": [
+          "dist/**",
+          "prisma/schema.prisma",
+          "node_modules/.prisma/**"
+        ]
       }
     }
   ],
@@ -23,13 +27,5 @@
         "HEAD"
       ]
     }
-  ],
-  "env": {
-    "DATABASE_URL": "@database_url"
-  },
-  "functions": {
-    "api/index.ts": {
-      "maxDuration": 30
-    }
-  }
+  ]
 }
