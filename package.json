@@ -1,0 +1,40 @@
+{
+  "name": "restaurant-monorepo",
+  "version": "1.0.0",
+  "description": "Restaurant management system with BE and FE",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"pnpm --filter backend dev\" \"pnpm --filter frontend dev\"",
+    "build": "pnpm --filter backend build && pnpm --filter frontend build",
+    "start": "pnpm --filter backend start:prod",
+    "test": "pnpm -r test",
+    "lint": "pnpm -r lint",
+    "format": "pnpm -r format",
+    "clean": "pnpm -r run clean && rm -rf node_modules",
+    "shared:build": "pnpm --filter @restaurant/shared build",
+    "db:seed": "pnpm --filter backend db:seed",
+    "db:studio": "pnpm --filter backend db:studio",
+    "db:migrate": "pnpm --filter backend db:migrate",
+    "backend:dev": "pnpm --filter backend dev",
+    "frontend:dev": "pnpm --filter frontend dev",
+    "backend:build": "pnpm --filter backend build",
+    "frontend:build": "pnpm --filter frontend build",
+    "install:all": "pnpm install",
+    "typecheck": "pnpm -r run typecheck"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.1",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.3"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "author": "",
+  "license": "MIT"
+}
