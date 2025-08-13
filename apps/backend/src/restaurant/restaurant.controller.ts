@@ -183,4 +183,45 @@ export class RestaurantController {
       stats: await this.restaurantService.getRestaurantStats(),
     };
   }
+
+  // Initialize default menu (for demo purposes)
+  @Post('admin/init-menu')
+  @ApiOperation({ summary: 'Initialize default menu items for demo' })
+  @ApiResponse({
+    status: 201,
+    description: 'Default menu initialized successfully',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Menu already has items',
+  })
+  async initializeMenu() {
+    try {
+      const menuCount = await this.restaurantService.getMenuCount();
+      
+      if (menuCount > 0) {
+        return {
+          success: false,
+          message: `Menu already has ${menuCount} items. Cannot initialize default menu.`,
+          existingCount: menuCount,
+        };
+      }
+
+      const result = await this.restaurantService.initializeDefaultMenu();
+      
+      return {
+        success: true,
+        message: `Successfully initialized ${result.count} default menu items!`,
+        data: {
+          count: result.count,
+          items: result.items,
+        },
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message || 'Failed to initialize default menu',
+      };
+    }
+  }
 }

@@ -265,4 +265,62 @@ export class RestaurantService {
       totalRevenue: totalRevenue._sum.totalPrice || 0,
     };
   }
+
+  // Initialize default menu items (for demo purposes)
+  async initializeDefaultMenu(): Promise<{ count: number; items: MenuItem[] }> {
+    const existingCount = await this.prisma.menuItem.count();
+    
+    if (existingCount > 0) {
+      throw new Error('Menu already has items. Cannot initialize default menu.');
+    }
+
+    const defaultMenuItems = [
+      {
+        name: 'Sushi Platter',
+        price: 380,
+        description: 'Fresh sashimi sushi with wasabi and ginger',
+        cuisine: 'JAPANESE' as Cuisine,
+      },
+      {
+        name: 'Margherita Pizza',
+        price: 320,
+        description: 'Classic Italian pizza with fresh mozzarella and basil',
+        cuisine: 'ITALIAN' as Cuisine,
+      },
+      {
+        name: 'Burger Combo',
+        price: 250,
+        description: 'Beef burger with crispy fries and coleslaw',
+        cuisine: 'GENERAL' as Cuisine,
+      },
+      {
+        name: 'Chicken Teriyaki',
+        price: 280,
+        description: 'Grilled chicken with teriyaki sauce and steamed rice',
+        cuisine: 'JAPANESE' as Cuisine,
+      },
+      {
+        name: 'Pasta Carbonara',
+        price: 290,
+        description: 'Creamy pasta with bacon, eggs, and parmesan cheese',
+        cuisine: 'ITALIAN' as Cuisine,
+      },
+    ];
+
+    const result = await this.prisma.menuItem.createMany({
+      data: defaultMenuItems,
+    });
+
+    const createdItems = await this.getFullMenu();
+
+    return {
+      count: result.count,
+      items: createdItems,
+    };
+  }
+
+  // Get menu count
+  async getMenuCount(): Promise<number> {
+    return await this.prisma.menuItem.count();
+  }
 }
