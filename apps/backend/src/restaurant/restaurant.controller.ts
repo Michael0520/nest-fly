@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Patch } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch, NotFoundException, BadRequestException } from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
@@ -43,17 +43,20 @@ export class RestaurantController {
   @ApiResponse({ status: 200, description: 'Successfully retrieved menu item' })
   @ApiResponse({ status: 404, description: 'Menu item not found' })
   async getMenuItem(@Param('id') id: string) {
-    const item = await this.restaurantService.getMenuItemById(parseInt(id));
+    const menuItemId = parseInt(id, 10);
+    
+    if (isNaN(menuItemId)) {
+      throw new BadRequestException('Invalid menu item ID');
+    }
+
+    const item = await this.restaurantService.getMenuItemById(menuItemId);
 
     if (!item) {
-      return {
-        success: false,
-        message: 'Menu item not found',
-      };
+      throw new NotFoundException('Menu item not found');
     }
 
     return {
-      success: true,
+      message: `Details for ${item.name}`,
       item,
     };
   }
@@ -75,15 +78,12 @@ export class RestaurantController {
     );
 
     if (!order) {
-      return {
-        success: false,
-        message:
-          'Order creation failed, please check if menu items are correct',
-      };
+      throw new BadRequestException(
+        'Order creation failed. Please check if menu items are correct.'
+      );
     }
 
     return {
-      success: true,
       message:
         'Order created successfully! Our waitstaff has received your order and our chefs are preparing it...',
       order,
@@ -115,17 +115,20 @@ export class RestaurantController {
   })
   @ApiResponse({ status: 404, description: 'Order not found' })
   async getOrder(@Param('id') id: string) {
-    const order = await this.restaurantService.getOrderById(parseInt(id));
+    const orderId = parseInt(id, 10);
+    
+    if (isNaN(orderId)) {
+      throw new BadRequestException('Invalid order ID');
+    }
+
+    const order = await this.restaurantService.getOrderById(orderId);
 
     if (!order) {
-      return {
-        success: false,
-        message: 'Order not found',
-      };
+      throw new NotFoundException('Order not found');
     }
 
     return {
-      success: true,
+      message: `Order #${orderId} details`,
       order,
     };
   }
@@ -144,27 +147,29 @@ export class RestaurantController {
     @Param('id') id: string,
     @Body() statusData: UpdateOrderStatusDto,
   ) {
+    const orderId = parseInt(id, 10);
+    
+    if (isNaN(orderId)) {
+      throw new BadRequestException('Invalid order ID');
+    }
+
     const updatedOrder = await this.restaurantService.updateOrderStatus(
-      parseInt(id),
+      orderId,
       statusData.status,
     );
 
     if (!updatedOrder) {
-      return {
-        success: false,
-        message: 'Order status update failed',
-      };
+      throw new NotFoundException('Order not found');
     }
 
     const statusMessages = {
-      pending: 'Order pending',
+      pending: 'Order is pending',
       preparing: 'Our chefs are preparing your meal...',
-      ready: 'Your meal is ready, our waitstaff will serve it soon!',
-      served: 'Meal served, enjoy your dining!',
+      ready: 'Your meal is ready for pickup!',
+      served: 'Order completed. Thank you for dining with us!',
     };
 
     return {
-      success: true,
       message: statusMessages[statusData.status],
       order: updatedOrder,
     };
@@ -198,7 +203,7 @@ export class RestaurantController {
   async initializeMenu() {
     try {
       const menuCount = await this.restaurantService.getMenuCount();
-      
+
       if (menuCount > 0) {
         return {
           success: false,
@@ -208,7 +213,7 @@ export class RestaurantController {
       }
 
       const result = await this.restaurantService.initializeDefaultMenu();
-      
+
       return {
         success: true,
         message: `Successfully initialized ${result.count} default menu items!`,
