@@ -118,3 +118,6 @@ prisma/migrations/**/migration.sql
 server.log
 prisma-dev.log
 prisma-studio.log
+
+# Local Claude Code configuration
+CLAUDE.md
