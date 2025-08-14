@@ -11,7 +11,6 @@ import { SharedModule } from './shared/shared.module';
 
 // Feature modules
 import { RestaurantModule } from './modules/restaurant/restaurant.module';
-import { RestaurantModule as LegacyRestaurantModule } from './restaurant/restaurant.module';
 
 // Global providers
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
@@ -23,7 +22,6 @@ import { CustomValidationPipe } from './common/pipes/validation.pipe';
     ConfigModule,
     SharedModule,
     RestaurantModule,
-    LegacyRestaurantModule, // Temporary backward compatibility
   ],
   controllers: [AppController],
   providers: [
