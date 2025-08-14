@@ -25,7 +25,9 @@ export function useMenu() {
     queryKey: queryKeys.menu,
     queryFn: async () => {
       const response = await api.get('/api/menu')
-      const parsed = MenuResponseSchema.parse(response.data)
+      // Extract data from ResponseInterceptor wrapper
+      const { data } = response.data
+      const parsed = MenuResponseSchema.parse(data)
       return parsed.menu
     },
   })
@@ -37,7 +39,9 @@ export function useOrders() {
     queryKey: queryKeys.orders,
     queryFn: async () => {
       const response = await api.get('/api/orders')
-      const parsed = GetOrdersResponseSchema.parse(response.data)
+      // Extract data from ResponseInterceptor wrapper
+      const { data } = response.data
+      const parsed = GetOrdersResponseSchema.parse(data)
       return parsed.orders
     },
   })
@@ -48,8 +52,10 @@ export function useOrder(id: number) {
     queryKey: queryKeys.order(id),
     queryFn: async () => {
       const response = await api.get(`/api/orders/${id}`)
-      const parsed = GetOrderResponseSchema.parse(response.data)
-      if (!parsed.success || !parsed.order) {
+      // Extract data from ResponseInterceptor wrapper
+      const { success, data } = response.data
+      const parsed = GetOrderResponseSchema.parse(data)
+      if (!success || !parsed.order) {
         throw new Error(parsed.message || 'Order not found')
       }
       return parsed.order
@@ -64,7 +70,9 @@ export function useStats() {
     queryKey: queryKeys.stats,
     queryFn: async () => {
       const response = await api.get('/api/admin/stats')
-      const parsed = StatsResponseSchema.parse(response.data)
+      // Extract data from ResponseInterceptor wrapper
+      const { data } = response.data
+      const parsed = StatsResponseSchema.parse(data)
       return parsed.stats
     },
   })
@@ -77,8 +85,10 @@ export function useCreateOrder() {
   return useMutation({
     mutationFn: async (orderData: CreateOrder) => {
       const response = await api.post('/api/orders', orderData)
-      const parsed = CreateOrderResponseSchema.parse(response.data)
-      if (!parsed.success || !parsed.order) {
+      // Extract data from ResponseInterceptor wrapper
+      const { success, data } = response.data
+      const parsed = CreateOrderResponseSchema.parse(data)
+      if (!success || !parsed.order) {
         throw new Error(parsed.message || 'Failed to create order')
       }
       return parsed.order
@@ -96,8 +106,10 @@ export function useUpdateOrderStatus() {
   return useMutation({
     mutationFn: async ({ id, status }: { id: number; status: UpdateOrderStatus['status'] }) => {
       const response = await api.patch(`/api/orders/${id}/status`, { status })
-      const parsed = UpdateOrderStatusResponseSchema.parse(response.data)
-      if (!parsed.success || !parsed.order) {
+      // Extract data from ResponseInterceptor wrapper
+      const { success, data } = response.data
+      const parsed = UpdateOrderStatusResponseSchema.parse(data)
+      if (!success || !parsed.order) {
         throw new Error(parsed.message || 'Failed to update order status')
       }
       return parsed.order
