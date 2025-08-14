@@ -24,7 +24,7 @@ export function useMenu() {
   return useQuery({
     queryKey: queryKeys.menu,
     queryFn: async () => {
-      const response = await api.get('/restaurant/menu')
+      const response = await api.get('/api/menu')
       const parsed = MenuResponseSchema.parse(response.data)
       return parsed.menu
     },
@@ -36,7 +36,7 @@ export function useOrders() {
   return useQuery({
     queryKey: queryKeys.orders,
     queryFn: async () => {
-      const response = await api.get('/restaurant/orders')
+      const response = await api.get('/api/orders')
       const parsed = GetOrdersResponseSchema.parse(response.data)
       return parsed.orders
     },
@@ -47,7 +47,7 @@ export function useOrder(id: number) {
   return useQuery({
     queryKey: queryKeys.order(id),
     queryFn: async () => {
-      const response = await api.get(`/restaurant/order/${id}`)
+      const response = await api.get(`/api/orders/${id}`)
       const parsed = GetOrderResponseSchema.parse(response.data)
       if (!parsed.success || !parsed.order) {
         throw new Error(parsed.message || 'Order not found')
@@ -63,7 +63,7 @@ export function useStats() {
   return useQuery({
     queryKey: queryKeys.stats,
     queryFn: async () => {
-      const response = await api.get('/restaurant/stats')
+      const response = await api.get('/api/admin/stats')
       const parsed = StatsResponseSchema.parse(response.data)
       return parsed.stats
     },
@@ -76,7 +76,7 @@ export function useCreateOrder() {
   
   return useMutation({
     mutationFn: async (orderData: CreateOrder) => {
-      const response = await api.post('/restaurant/order', orderData)
+      const response = await api.post('/api/orders', orderData)
       const parsed = CreateOrderResponseSchema.parse(response.data)
       if (!parsed.success || !parsed.order) {
         throw new Error(parsed.message || 'Failed to create order')
@@ -95,7 +95,7 @@ export function useUpdateOrderStatus() {
   
   return useMutation({
     mutationFn: async ({ id, status }: { id: number; status: UpdateOrderStatus['status'] }) => {
-      const response = await api.patch(`/restaurant/order/${id}/status`, { status })
+      const response = await api.patch(`/api/orders/${id}/status`, { status })
       const parsed = UpdateOrderStatusResponseSchema.parse(response.data)
       if (!parsed.success || !parsed.order) {
         throw new Error(parsed.message || 'Failed to update order status')

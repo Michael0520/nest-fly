@@ -118,3 +118,6 @@ prisma/migrations/**/migration.sql
 server.log
 prisma-dev.log
 prisma-studio.log
+
+# Local documentation and notes (keep out of git)
+local-docs/
