@@ -3,9 +3,6 @@ import { api } from './config'
 import {
   MenuResponseSchema,
   GetOrdersResponseSchema,
-  GetOrderResponseSchema,
-  CreateOrderResponseSchema,
-  UpdateOrderStatusResponseSchema,
   StatsResponseSchema,
   type CreateOrder,
   type UpdateOrderStatus,
@@ -54,11 +51,12 @@ export function useOrder(id: number) {
       const response = await api.get(`/api/orders/${id}`)
       // Extract data from ResponseInterceptor wrapper
       const { success, data } = response.data
-      const parsed = GetOrderResponseSchema.parse(data)
-      if (!success || !parsed.order) {
-        throw new Error(parsed.message || 'Order not found')
+      // Use the data directly without parsing with GetOrderResponseSchema
+      // because the inner data doesn't have success field
+      if (!success || !data.order) {
+        throw new Error(data.message || 'Order not found')
       }
-      return parsed.order
+      return data.order
     },
     enabled: !!id,
   })
@@ -87,11 +85,12 @@ export function useCreateOrder() {
       const response = await api.post('/api/orders', orderData)
       // Extract data from ResponseInterceptor wrapper
       const { success, data } = response.data
-      const parsed = CreateOrderResponseSchema.parse(data)
-      if (!success || !parsed.order) {
-        throw new Error(parsed.message || 'Failed to create order')
+      // Use the data directly without parsing with CreateOrderResponseSchema
+      // because the inner data doesn't have success field
+      if (!success || !data.order) {
+        throw new Error(data.message || 'Failed to create order')
       }
-      return parsed.order
+      return data.order
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.orders })
@@ -108,11 +107,12 @@ export function useUpdateOrderStatus() {
       const response = await api.patch(`/api/orders/${id}/status`, { status })
       // Extract data from ResponseInterceptor wrapper
       const { success, data } = response.data
-      const parsed = UpdateOrderStatusResponseSchema.parse(data)
-      if (!success || !parsed.order) {
-        throw new Error(parsed.message || 'Failed to update order status')
+      // Use the data directly without parsing with UpdateOrderStatusResponseSchema
+      // because the inner data doesn't have success field
+      if (!success || !data.order) {
+        throw new Error(data.message || 'Failed to update order status')
       }
-      return parsed.order
+      return data.order
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.orders })
